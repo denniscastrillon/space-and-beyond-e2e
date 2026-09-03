@@ -1,0 +1,87 @@
+plugins {
+    id 'java'
+    id 'net.serenity-bdd.serenity-gradle-plugin' version '4.3.2'
+}
+
+group = 'com.devco'
+version = '1.0.0'
+
+repositories {
+    mavenCentral()
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+ext {
+    serenityVersion      = '4.3.2'
+    cucumberVersion      = '7.31.0'
+    junitPlatformVersion = '1.13.0'
+    junitJupiterVersion  = '5.13.0'
+}
+
+dependencies {
+    testImplementation "net.serenity-bdd:serenity-core:${serenityVersion}"
+    testImplementation "net.serenity-bdd:serenity-screenplay:${serenityVersion}"
+    testImplementation "net.serenity-bdd:serenity-screenplay-webdriver:${serenityVersion}"
+    testImplementation "net.serenity-bdd:serenity-cucumber:${serenityVersion}"
+
+    testImplementation "io.cucumber:cucumber-java:${cucumberVersion}"
+    testImplementation "io.cucumber:cucumber-junit-platform-engine:${cucumberVersion}"
+    testImplementation "org.junit.platform:junit-platform-suite:${junitPlatformVersion}"
+    testImplementation "org.junit.jupiter:junit-jupiter:${junitJupiterVersion}"
+
+    testImplementation "org.assertj:assertj-core:3.26.3"
+    testRuntimeOnly    "org.slf4j:slf4j-simple:2.0.16"
+}
+
+clean { delete 'history' }
+tasks.matching { it.name == 'aggregate' }.configureEach {
+    doLast { delete 'history' }
+}
+
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+    outputs.upToDateWhen { false }
+
+    ['chrome.switches', 'headless.mode', 'webdriver.base.url', 'environment',
+     'serenity.take.screenshots', 'cucumber.filter.tags',
+     'cucumber.execution.parallel.config.fixed.parallelism'].each { key ->
+        if (System.getProperty(key) != null) {
+            systemProperty key, System.getProperty(key)
+        }
+    }
+
+    if (project.hasProperty('headless')) {
+        systemProperty 'headless.mode', 'true'
+    }
+
+    systemProperty 'user.language', 'en'
+    systemProperty 'user.country', 'US'
+
+    testLogging {
+        events 'passed', 'skipped', 'failed'
+        exceptionFormat 'short'
+    }
+
+    finalizedBy 'aggregate'
+}
+
+test {
+    systemProperty 'cucumber.filter.tags',
+            (project.findProperty('tags')
+                    ?: System.getProperty('cucumber.filter.tags')
+                    ?: 'not @manual and not @bug')
+}
+
+tasks.register('bugReport', Test) {
+    group = 'verification'
+    description = 'Runs the @bug scenarios (known open defects - expected to FAIL).'
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+    systemProperty 'cucumber.filter.tags', '@bug'
+    ignoreFailures = true
+}
