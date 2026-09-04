@@ -28,3 +28,7 @@ Thumbs.db
 docs/Prueba Tecnica Automatizador.docx
 docs/Preguntas y Respuestas - Sustentacion.pdf
 docs/Preguntas y Respuestas - Sustentacion.html
+
+# PDF exports of docs/*.md for sending by email - source of truth is the .md
+docs/casos-de-prueba.pdf
+docs/reporte-de-bugs.pdf
