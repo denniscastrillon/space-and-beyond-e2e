@@ -23,3 +23,8 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Personal study material - kept local only, not published
+docs/Prueba Tecnica Automatizador.docx
+docs/Preguntas y Respuestas - Sustentacion.pdf
+docs/Preguntas y Respuestas - Sustentacion.html

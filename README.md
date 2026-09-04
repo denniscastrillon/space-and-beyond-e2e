@@ -1,90 +1,93 @@
-# Space & Beyond — E2E Test Automation
+# Space & Beyond — Automatización de Pruebas E2E
 
-End-to-end UI automation for the "Space & Beyond" booking flow on
-[https://demo.testim.io/](https://demo.testim.io/), built with **Serenity BDD**
-(Screenplay pattern) and **Cucumber**.
+Automatización end-to-end del flujo de reserva de "Space & Beyond" en
+[https://demo.testim.io/](https://demo.testim.io/), construida con **Serenity BDD**
+(patrón Screenplay) y **Cucumber**.
 
-The full brief is in [`docs/Prueba Tecnica Automatizador.docx`](docs/Prueba%20Tecnica%20Automatizador.docx).
+## Contexto
 
-## Tech stack
+El flujo cubierto: búsqueda de viaje (fechas, adultos/niños) → selección de destino
+(filtro de precios, LOAD MORE) → checkout (datos del viajero, carga de documento, código
+promocional, términos y condiciones) → PAY NOW. Todos los datos de prueba están
+parametrizados desde Gherkin; nada queda escrito directamente en el código.
+
+## Stack
 
 | | |
 |---|---|
-| Language | Java 21 |
-| Build / dependencies | Gradle 8.7 (wrapper) |
-| Test framework | Serenity BDD 4.3.2 + Screenplay |
-| BDD | Cucumber 7.31 (Gherkin) |
-| Runner | JUnit 5 Platform (parallel by scenario) |
-| Browser | Selenium 4.38 (Selenium Manager resolves the driver) |
-| Assertions | AssertJ 3.26 |
+| Lenguaje | Java 21 |
+| Build / dependencias | Gradle 8.7 (wrapper) |
+| Framework de pruebas | Serenity BDD 4.3.2 + Screenplay |
+| BDD | Cucumber 7.31 (Gherkin en español) |
+| Runner | JUnit 5 Platform (paralelo por escenario) |
+| Navegador | Selenium 4.38 (Selenium Manager resuelve el driver) |
+| Aserciones | AssertJ 3.26 |
 
-## Requirements
+## Requisitos
 
-- JDK 21 (`gradle.properties` points `org.gradle.java.home` at a local JDK 21 — adjust or
-  remove it if `JAVA_HOME` already points at one; Gradle also auto-detects it via toolchain).
-- Google Chrome installed.
-- Internet access.
+- JDK 21 (`gradle.properties` puede fijar `org.gradle.java.home`; Gradle también lo
+  detecta solo vía toolchain).
+- Google Chrome instalado.
+- Conexión a Internet.
 
-## Running the suite
+## Ejecución
 
 ```bash
-./gradlew clean test                 # full regression suite (parallel)
-./gradlew clean test -Pheadless      # headless
-./gradlew test -Ptags="@filtro"      # a subset by tag
+./gradlew clean test                 # suite completa de regresión (en paralelo)
+./gradlew clean test -Pheadless      # modo headless
+./gradlew test -Ptags="@filtro"      # un subconjunto por tag
 ./gradlew test -Dcucumber.execution.parallel.config.fixed.parallelism=4
-./gradlew bugReport                  # runs only the @bug scenarios (see below)
+./gradlew bugReport                  # solo los escenarios @bug (ver abajo)
 ```
 
-Report: `target/site/serenity/index.html`.
+Reporte: `target/site/serenity/index.html`.
 
-## Project layout
+## Estructura
 
 ```
 src/test/resources/
-├── features/agendar_viaje.feature      Gherkin scenarios
-├── serenity.conf                       WebDriver / environment config
-├── junit-platform.properties           Cucumber + parallel execution
-└── data/health-insurance.pdf           upload fixture
+├── features/agendar_viaje.feature      escenarios Gherkin
+├── serenity.conf                       configuración de WebDriver / entorno
+├── junit-platform.properties           Cucumber + ejecución en paralelo
+└── data/health-insurance.pdf           archivo para la carga de documento
 src/test/java/com/devco/spaceandbeyond/
-├── runners/            AcceptanceTestSuite  (JUnit 5 entry point)
-├── stepdefinitions/    Cucumber glue + Screenplay stage setup
-├── tasks/              business-level Screenplay tasks
-├── interactions/       low-level widget interactions (calendar, slider, dropdown)
-├── questions/          Screenplay questions
-├── ui/                 Target locators + PageObject for the base URL
-└── model/              domain records (Traveller, TravelSearch)
+├── runners/            AcceptanceTestSuite  (punto de entrada JUnit 5)
+├── stepdefinitions/    glue de Cucumber + montaje del actor Screenplay
+├── tasks/              tareas Screenplay de negocio
+├── interactions/       interacciones de bajo nivel (calendario, slider, dropdown)
+├── questions/          preguntas Screenplay
+├── ui/                 localizadores (Target) + PageObject de la URL base
+└── model/              records de dominio (Traveller, TravelSearch)
 docs/
-├── casos-de-prueba.md   test cases (automated + written)
-└── reporte-de-bugs.md   bug report
+├── casos-de-prueba.md   casos de prueba (automatizados + escritos)
+└── reporte-de-bugs.md   reporte de bugs
 ```
 
 ## Screenplay
 
 ```
-Actor  ──▶  Ability (BrowseTheWeb, one browser per worker thread)
+Actor  ──▶  Ability (BrowseTheWeb, un navegador por hilo)
   ├── attemptsTo(Task)  ──▶  Interaction / Action  ──▶  Target
   └── asksFor(Question) ──▶  Target  ──▶  AssertJ
 ```
 
-Test data is never hard-coded in the tasks — dates (as day offsets), party size, price
-limits, traveller details, promo codes and the destination all come from the feature file.
+## Ejecución en paralelo
 
-## Parallel execution
+Configurada en `junit-platform.properties`: un hilo por escenario, pool fijo de 3
+(`-Dcucumber.execution.parallel.config.fixed.parallelism=N` para cambiarlo). Cada
+escenario tiene su propio navegador (`serenity.restart.browser.for.each = scenario`),
+por lo que no comparten estado.
 
-Configured in `junit-platform.properties`: one thread per scenario, fixed pool of 3
-(`-Dcucumber.execution.parallel.config.fixed.parallelism=N` to change it). Each scenario
-gets its own browser (`serenity.restart.browser.for.each = scenario`), so scenarios never
-share state.
+## Escenarios de bug
 
-## Bug scenarios
+Se asume que al presionar **PAY NOW** el sistema debe mostrar el mensaje
+*"Destination Booked"*. No ocurre (ver [`docs/reporte-de-bugs.md`](docs/reporte-de-bugs.md),
+SPACE-001). El escenario que lo verifica lleva el tag `@bug` y queda excluido de la
+ejecución por defecto para que la regresión quede en verde; se ejecuta bajo demanda con
+`./gradlew bugReport`.
 
-The brief assumes that pressing **PAY NOW** shows a *"Destination Booked"* message. It
-doesn't (see [`docs/reporte-de-bugs.md`](docs/reporte-de-bugs.md), SPACE-001). The scenario
-that asserts it carries the `@bug` tag and is excluded from the default run so the
-regression stays green; run it on demand with `./gradlew bugReport`.
+## Casos de prueba y reporte de bugs
 
-## Test cases & bug report
-
-- [`docs/casos-de-prueba.md`](docs/casos-de-prueba.md) — 15 cases: 5 automated (critical
-  path), 10 written (non-critical).
-- [`docs/reporte-de-bugs.md`](docs/reporte-de-bugs.md) — 5 defects (1 blocker, 2 major, 2 minor).
+- [`docs/casos-de-prueba.md`](docs/casos-de-prueba.md) — 15 casos: 5 automatizados
+  (ruta crítica), 10 escritos (no crítica).
+- [`docs/reporte-de-bugs.md`](docs/reporte-de-bugs.md) — 5 defectos (1 blocker, 2 major, 2 minor).
