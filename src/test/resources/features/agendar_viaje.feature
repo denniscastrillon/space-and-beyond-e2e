@@ -8,10 +8,6 @@ Característica: Agendamiento de un viaje espacial en Space & Beyond
     Para entregar independencia a mis clientes
 
   Aplicación bajo prueba: https://demo.testim.io/
-  Nota: los precios de los destinos son datos de un tercero (Testim) fuera de
-  nuestro control; por eso las aserciones de precio verifican la invariante que
-  sí depende del filtro (todo precio visible queda por debajo del máximo elegido)
-  en vez de comparar contra un valor exacto.
 
   Antecedentes:
     Dado que Paula quiere agendar un viaje espacial en Space & Beyond
