@@ -24,6 +24,7 @@ Leyenda de prioridad:
 | CP-13 | Persistencia de fechas y viajeros en el resumen del checkout | No crítica | Escrito |
 | CP-14 | Filtro por "Launch" y "Planet color" | No crítica | Escrito |
 | CP-15 | Reingreso: volver atrás desde el checkout mantiene la selección | No crítica | Escrito |
+| CP-16 | El autoajuste de Returning=Departing no debe producir una fecha de salida "hoy" | No crítica | Escrito |
 
 ---
 
@@ -145,3 +146,14 @@ Automatizado con el tag `@bug`; se ejecuta con `./gradlew bugReport`.
 ### CP-15 — Volver atrás desde el checkout
 1. Desde `/checkout`, navegar hacia atrás en el navegador.
 2. **Esperado:** el gallery mantiene el filtro de precio y la selección de viajeros previos.
+
+### CP-16 — Autoajuste de fechas no debe producir una salida "hoy"
+1. Abrir el calendario de **Departing** y confirmar que hoy y los días anteriores
+   aparecen deshabilitados (el mínimo seleccionable es mañana).
+2. Seleccionar **Departing = mañana**.
+3. Abrir **Returning** y seleccionar la misma fecha que Departing (mañana).
+4. **Esperado:** Departing conserva un valor válido según su propia regla mínima
+   (nunca hoy).
+5. **Actual:** Departing se autoajusta a **hoy**, un valor que su propio calendario
+   nunca permite elegir directamente; el estado inválido llega sin corregirse hasta
+   el resumen del checkout → **SPACE-006**.

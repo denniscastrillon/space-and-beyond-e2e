@@ -182,6 +182,43 @@ El usuario no sabe cuánto ahorró ni por qué; el total no es reproducible.
 
 ---
 
+## SPACE-006 — La fecha de salida puede terminar en el día de hoy por una vía indirecta, aunque el calendario lo prohíbe seleccionar directamente
+
+- **Severidad:** Minor
+
+### Pasos para reproducir
+1. Con la fecha actual en, por ejemplo, 4 de septiembre, abrir el calendario de
+   **Departing**. Confirmar que el día de hoy (4) y los anteriores aparecen
+   deshabilitados — el mínimo seleccionable directamente es mañana (5).
+2. Seleccionar **Departing = 5 de septiembre** (el mínimo permitido).
+3. Abrir el calendario de **Returning** y seleccionar también **5 de septiembre**
+   (el mismo día que Departing).
+4. Observar el campo **Departing** después de confirmar Returning.
+
+### Resultado esperado
+Si Returning no puede ser anterior o igual a Departing sin ajustar algo, el
+ajuste automático debería respetar la misma regla mínima que ya aplica el propio
+calendario de Departing (nunca hoy, nunca antes de mañana) — por ejemplo, recorriendo
+Returning hacia adelante en vez de mover Departing hacia atrás, o bloqueando la
+selección.
+
+### Resultado actual
+**Departing se autoajusta a hoy (4 de septiembre)** — un valor que su propio
+calendario nunca permite elegir a mano en el paso 1. El estado inválido no se
+corrige en ningún punto posterior: se refleja igual en el resumen de la galería
+("1 traveler, Sep 4 – 5") y llega intacto hasta el "Order Summary" del checkout
+("Dates: Sep 4 – 5"), sin ninguna advertencia.
+
+### Impacto
+Dos reglas de validación de fecha conviven en la app sin compartir el mismo mínimo:
+la del calendario de Departing (que sí impide salir hoy) y la del ajuste automático
+al mover Returning (que no la respeta). El resultado es una reserva con fecha de
+salida "hoy mismo" que la propia UI, en cualquier otro punto de entrada, considera
+inválida — inconsistencia de datos que en un sistema real de reservas afectaría
+disponibilidad y tarifas.
+
+---
+
 ## Resumen
 
 | ID | Severidad | Área | Estado |
@@ -191,3 +228,4 @@ El usuario no sabe cuánto ahorró ni por qué; el total no es reproducible.
 | SPACE-003 | Major | Checkout / Validación de teléfono | Abierto (mitigado en la suite con `--lang=en-US`) |
 | SPACE-004 | Minor | Gallery / LOAD MORE | Abierto |
 | SPACE-005 | Minor | Checkout / Código promocional | Abierto |
+| SPACE-006 | Minor | Landing / Selector de fechas | Abierto |
