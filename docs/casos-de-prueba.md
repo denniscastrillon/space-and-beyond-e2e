@@ -116,12 +116,16 @@ Automatizado con el tag `@bug`; se ejecuta con `./gradlew bugReport`.
 ### CP-10 — Términos y condiciones obligatorios
 1. Diligenciar todo el checkout con datos válidos y cargar el documento, **sin** marcar el check.
 2. **Esperado:** PAY NOW deshabilitado hasta marcar "I agree to the terms and conditions".
-3. **Actual:** PAY NOW se habilita sin el check → **SPACE-002**.
+3. **Actual:** PAY NOW se habilita sin el check, pero al presionarlo aparece un modal
+   bloqueante ("You must agree to the terms and conditions to complete your purchase")
+   → el requisito sí se exige, solo que después del clic en vez de antes → **SPACE-002**.
 
 ### CP-11 — Carga de documento obligatoria
 1. Diligenciar todo el checkout con datos válidos y marcar el check, **sin** cargar archivo.
 2. **Esperado:** PAY NOW deshabilitado hasta cargar el documento en la drop-zone.
-3. **Actual:** PAY NOW se habilita sin documento → **SPACE-002**.
+3. **Actual:** PAY NOW se habilita sin documento, y al presionarlo no aparece ningún
+   mensaje ni cambia nada visible (mismo silencio que un envío válido, ver SPACE-001)
+   → no hay evidencia de que el documento se valide en ningún punto → **SPACE-002**.
 
 ### CP-12 — Código promocional inválido / vacío
 1. Dejar el campo de código vacío → el botón APPLY está deshabilitado.

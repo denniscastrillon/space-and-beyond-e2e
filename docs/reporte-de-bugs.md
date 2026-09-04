@@ -50,7 +50,7 @@ funcionalidad central del producto.
 
 ---
 
-## SPACE-002 — PAY NOW se habilita sin aceptar términos ni cargar el documento obligatorio
+## SPACE-002 — PAY NOW se habilita antes de cumplir sus propios requisitos, y el documento de salud no se valida
 
 - **Severidad:** Major
 
@@ -58,21 +58,35 @@ funcionalidad central del producto.
 1. Llegar al checkout de cualquier destino.
 2. Diligenciar únicamente **Name**, **Email Address**, **Social Security Number** y
    **Phone Number** con datos válidos.
-3. **No** marcar el check de términos y condiciones.
-4. **No** cargar ningún archivo en la drop-zone.
+3. **No** marcar el check de términos y condiciones, y **no** cargar ningún archivo
+   en la drop-zone.
 
 ### Resultado esperado
-**PAY NOW** permanece deshabilitado: el check de términos y la carga del documento
-de salud se presentan como obligatorios en la UI.
+**PAY NOW** permanece deshabilitado hasta marcar el check de términos y cargar el
+documento de salud; ambos requisitos se comunican en la UI antes del clic.
 
-### Resultado actual
-**PAY NOW** se habilita en cuanto los 4 campos de texto son válidos, sin importar
-el check ni el archivo. (El defecto SPACE-001 impide comprobar qué haría el pago,
-pero la habilitación del botón ya es incorrecta.)
+### Resultado actual (dos comportamientos distintos, confirmados por separado)
+- **Términos y condiciones:** con los 4 campos válidos, **PAY NOW** se habilita
+  aunque el check no esté marcado. Sin embargo, al hacer clic sí aparece un modal
+  bloqueante: *"Terms and Conditions — You must agree to the terms and conditions
+  to complete your purchase."* — el requisito **sí se exige**, solo que la
+  validación ocurre después del clic en vez de deshabilitar el botón de entrada.
+  El defecto real aquí es de UX/accesibilidad: el botón aparenta estar listo para
+  pagar cuando en realidad va a rechazar el intento.
+- **Documento de salud:** marcando el check pero sin cargar ningún archivo, al
+  presionar **PAY NOW** no aparece ningún mensaje ni cambia nada visible en pantalla
+  — el mismo silencio que produce un envío completamente válido (SPACE-001). No se
+  encontró ninguna señal (modal, mensaje, request de red) de que el documento se
+  valide en algún punto; tampoco puede descartarse con certeza, porque SPACE-001
+  hace que *ningún* clic en PAY NOW produzca una confirmación observable, sea
+  válido o no.
 
 ### Impacto
-Se puede intentar pagar sin consentimiento legal registrado ni el documento
-requerido; inconsistencia entre las reglas de la UI y su comportamiento real.
+El check de términos sí se hace cumplir, pero de una forma que confunde al usuario
+(el botón invita a pagar y luego lo rechaza) — un problema de consistencia entre el
+estado visual del control y su validación real. La exigencia del documento de salud,
+en cambio, no tiene ninguna evidencia de estar implementada; combinado con SPACE-001,
+no hay forma de confirmar desde la UI si algún día se llegara a validar.
 
 ---
 
