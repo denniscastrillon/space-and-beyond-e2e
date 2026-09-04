@@ -5,7 +5,7 @@
 | Aplicación | https://demo.testim.io/ ("Space & Beyond") |
 | Navegador | Google Chrome 151–152 (headed y `--headless=new`) |
 | SO | Windows 11 |
-| Fecha de detección | 2026-09-03 |
+| Fecha de detección | 2026-09-03 a 2026-09-04 |
 | Build de pruebas | Serenity BDD 4.3.2 + Screenplay + Cucumber 7.31.0 (Java 21) |
 
 Severidad: **Blocker** > **Major** > **Minor**.
