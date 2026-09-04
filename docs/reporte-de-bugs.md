@@ -91,17 +91,26 @@ requerido; inconsistencia entre las reglas de la UI y su comportamiento real.
 El número `+1787` + 7 dígitos se acepta y **PAY NOW** se habilita.
 
 ### Resultado actual
-Con idioma `es-*` el campo muestra **"Enter a valid ES phone number."** y trata el
-número como español (región ES), rechazándolo. El mismo número **sí** se acepta con
-el navegador en `en-US`.
+Con el navegador en español el campo lo rechaza, pero el **código de región que reporta
+varía según la variante exacta de español**:
+- `--lang=es` (español genérico, sin país) → **"Enter a valid 419 phone number."**
+  (`419` es el código numérico UN M49 de la región *"Latin America and the Caribbean"*,
+  el que usan Chrome/CLDR cuando el idioma es "es" sin un país específico).
+- `es-ES` (español de España) → **"Enter a valid ES phone number."**
+
+En ambos casos el número `+17871234567` se rechaza. El mismo número **sí** se acepta
+con el navegador en `en-US`.
 > En la suite se fuerza `--lang=en-US` / `intl.accept_languages=en-US` para que el
 > caso de la ruta crítica sea determinista; el bug permanece para usuarios reales
-> con navegador en español.
+> con navegador en español, sea cual sea la variante.
 
 ### Impacto
 La región de validación del teléfono no debería derivarse del idioma del navegador
-para un formulario que exige explícitamente un prefijo `+1787`. Usuarios legítimos
-con navegador en español no pueden pagar.
+para un formulario que exige explícitamente un prefijo `+1787`; además, `419` ni
+siquiera es un código de país real (agrupa ~20 países sin un plan de marcado único),
+así que la app está comparando el número contra una región que no corresponde a
+ningún formato telefónico verificable. Usuarios legítimos con navegador en español
+(cualquier variante) no pueden pagar.
 
 ---
 
