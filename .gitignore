@@ -16,9 +16,10 @@ serenity-history/
 *.iws
 .vscode/
 
-# OS
+# OS / Office
 Thumbs.db
 .DS_Store
+~$*
 
 # Logs
 *.log
