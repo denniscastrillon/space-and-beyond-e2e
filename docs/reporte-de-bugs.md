@@ -91,26 +91,36 @@ requerido; inconsistencia entre las reglas de la UI y su comportamiento real.
 El número `+1787` + 7 dígitos se acepta y **PAY NOW** se habilita.
 
 ### Resultado actual
-Con el navegador en español el campo lo rechaza, pero el **código de región que reporta
-varía según la variante exacta de español**:
-- `--lang=es` (español genérico, sin país) → **"Enter a valid 419 phone number."**
-  (`419` es el código numérico UN M49 de la región *"Latin America and the Caribbean"*,
-  el que usan Chrome/CLDR cuando el idioma es "es" sin un país específico).
-- `es-ES` (español de España) → **"Enter a valid ES phone number."**
+Con el navegador en español el campo siempre lo rechaza. El patrón es consistente:
+la app toma el subcódigo de país/región de `navigator.language` **tal cual** y valida
+el teléfono contra esa región, ignorando que el campo exige explícitamente `+1787`.
+Se confirmó con cuatro variantes de idioma (`--lang` de Chrome):
 
-En ambos casos el número `+17871234567` se rechaza. El mismo número **sí** se acepta
-con el navegador en `en-US`.
+| `--lang` usado | `navigator.language` | Mensaje mostrado |
+|---|---|---|
+| `es` (genérico, sin país) | `es` | "Enter a valid **419** phone number." |
+| `es-ES` | `es-ES` | "Enter a valid **ES** phone number." |
+| `es-CO` | `es-CO` | "Enter a valid **CO** phone number." |
+| `es-MX` | `es-MX` | "Enter a valid **MX** phone number." |
+| `en-US` | `en-US` | (sin error — `+17871234567` se acepta) |
+
+`419` es el código numérico UN M49 de la región *"Latin America and the Caribbean"*
+— el que usa CLDR cuando el idioma es "es" sin país específico — y ni siquiera es un
+país real con un plan de marcado propio; aun así la app lo usa igual que un código
+ISO de país válido. El mismo número `+17871234567` **solo** se acepta con el
+navegador en `en-US`.
 > En la suite se fuerza `--lang=en-US` / `intl.accept_languages=en-US` para que el
 > caso de la ruta crítica sea determinista; el bug permanece para usuarios reales
-> con navegador en español, sea cual sea la variante.
+> con navegador en cualquier variante de español (o, por extensión, en cualquier
+> idioma/país distinto al que el negocio realmente exige).
 
 ### Impacto
 La región de validación del teléfono no debería derivarse del idioma del navegador
-para un formulario que exige explícitamente un prefijo `+1787`; además, `419` ni
-siquiera es un código de país real (agrupa ~20 países sin un plan de marcado único),
-así que la app está comparando el número contra una región que no corresponde a
-ningún formato telefónico verificable. Usuarios legítimos con navegador en español
-(cualquier variante) no pueden pagar.
+para un formulario que exige explícitamente un prefijo fijo (`+1787`). El defecto no
+depende de un país en particular: aplica a cualquier usuario cuyo navegador esté en
+un idioma/región distinto de `en-US` — es decir, a la mayoría de la audiencia
+hispanohablante real del producto, que es justamente a quien está dirigido un flujo
+de reserva con soporte para números de Puerto Rico.
 
 ---
 
