@@ -47,7 +47,7 @@ tasks.withType(Test).configureEach {
     useJUnitPlatform()
     outputs.upToDateWhen { false }
 
-    ['chrome.switches', 'headless.mode', 'webdriver.base.url', 'environment',
+    ['webdriver.driver', 'chrome.switches', 'headless.mode', 'webdriver.base.url', 'environment',
      'serenity.take.screenshots', 'cucumber.filter.tags',
      'cucumber.execution.parallel.config.fixed.parallelism'].each { key ->
         if (System.getProperty(key) != null) {

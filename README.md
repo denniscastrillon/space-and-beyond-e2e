@@ -20,7 +20,7 @@ parametrizados desde Gherkin; nada queda escrito directamente en el código.
 | Framework de pruebas | Serenity BDD 4.3.2 + Screenplay |
 | BDD | Cucumber 7.31 (Gherkin en español) |
 | Runner | JUnit 5 Platform (paralelo por escenario) |
-| Navegador | Selenium 4.38 (Selenium Manager resuelve el driver) |
+| Navegador | Selenium 4.38 (Selenium Manager resuelve el driver) — Chrome, Edge y Firefox |
 | Aserciones | AssertJ 3.26 |
 
 ## Requisitos
@@ -41,6 +41,20 @@ parametrizados desde Gherkin; nada queda escrito directamente en el código.
 ```
 
 Reporte: `target/site/serenity/index.html`.
+
+### Navegador
+
+Por defecto la suite corre en Chrome. Se puede elegir otro navegador con
+`-Dwebdriver.driver`, sin tocar código ni configuración:
+
+```bash
+./gradlew clean test -Dwebdriver.driver=firefox
+./gradlew clean test -Dwebdriver.driver=edge
+```
+
+Cada navegador tiene su propio bloque de capacidades W3C en `serenity.conf`
+(`goog:chromeOptions`, `ms:edgeOptions`, `moz:firefoxOptions`); Selenium Manager
+resuelve automáticamente el driver correspondiente.
 
 ## Estructura
 
