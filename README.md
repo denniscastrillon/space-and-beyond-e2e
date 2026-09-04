@@ -27,7 +27,8 @@ parametrizados desde Gherkin; nada queda escrito directamente en el código.
 
 - JDK 21 (`gradle.properties` puede fijar `org.gradle.java.home`; Gradle también lo
   detecta solo vía toolchain).
-- Google Chrome instalado.
+- Google Chrome instalado (navegador por defecto). Firefox o Edge solo si se va a
+  usar `-Dwebdriver.driver` (ver sección Navegador).
 - Conexión a Internet.
 
 ## Ejecución
@@ -71,7 +72,8 @@ src/test/java/com/devco/spaceandbeyond/
 ├── interactions/       interacciones de bajo nivel (calendario, slider, dropdown)
 ├── questions/          preguntas Screenplay
 ├── ui/                 localizadores (Target) + PageObject de la URL base
-└── model/              records de dominio (Traveller, TravelSearch)
+├── model/              records de dominio (Traveller, TravelSearch)
+└── util/               utilidades (resolver archivos de prueba en el classpath)
 docs/
 ├── casos-de-prueba.md   casos de prueba (automatizados + escritos)
 └── reporte-de-bugs.md   reporte de bugs
@@ -102,6 +104,6 @@ ejecución por defecto para que la regresión quede en verde; se ejecuta bajo de
 
 ## Casos de prueba y reporte de bugs
 
-- [`docs/casos-de-prueba.md`](docs/casos-de-prueba.md) — 15 casos: 5 automatizados
-  (ruta crítica), 10 escritos (no crítica).
-- [`docs/reporte-de-bugs.md`](docs/reporte-de-bugs.md) — 5 defectos (1 blocker, 2 major, 2 minor).
+- [`docs/casos-de-prueba.md`](docs/casos-de-prueba.md) — 16 casos: 5 automatizados
+  (ruta crítica), 11 escritos (no crítica).
+- [`docs/reporte-de-bugs.md`](docs/reporte-de-bugs.md) — 6 defectos (1 blocker, 2 major, 3 minor).
