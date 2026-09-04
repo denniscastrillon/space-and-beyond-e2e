@@ -45,6 +45,7 @@ precio máximo 1800, destino "Tongli", nombre/email/SSN/teléfono válidos,
 | 5 | Mover la barra de precios a un máximo de 1800 | Se mantienen visibles destinos con precio ≤ 1800 |
 | 6 | Verificar precios visibles | Todos ≤ 1800 |
 | 7 | Presionar **BOOK** en "Tongli" | Navega a `/checkout` con el precio de Tongli en el resumen |
+| 7.1 | Verificar el Total antes del código promocional | El Total equivale al precio de Tongli multiplicado por la cantidad de viajeros |
 | 8 | Diligenciar Name, Email Address, Social Security Number, Phone Number (`+1787` + 7 dígitos) | Sin errores de validación; **PAY NOW** se habilita |
 | 9 | Cargar el archivo en la drop-zone | Se muestra la vista previa del documento |
 | 10 | Ingresar el código promocional y presionar **APPLY** | El **Total** disminuye respecto al valor previo |

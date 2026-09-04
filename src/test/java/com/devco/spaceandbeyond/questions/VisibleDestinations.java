@@ -22,4 +22,10 @@ public class VisibleDestinations {
         return Question.about("the number of visible destinations").answeredBy(actor ->
                 DestinationsGallery.DESTINATION_CARDS.resolveAllFor(actor).size());
     }
+
+    public static Question<Double> priceOf(String destination) {
+        return Question.about("the price of '" + destination + "'").answeredBy(actor ->
+                Double.parseDouble(DestinationsGallery.priceTagFor(destination).resolveFor(actor).getText()
+                        .replaceAll("[^0-9.]", "")));
+    }
 }

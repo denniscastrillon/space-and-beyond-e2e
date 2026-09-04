@@ -29,6 +29,7 @@ import net.serenitybdd.screenplay.actors.OnStage;
 import net.serenitybdd.screenplay.waits.Wait;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.within;
 import static org.hamcrest.Matchers.is;
 
 public class AgendarViajeStepDefinitions {
@@ -36,6 +37,7 @@ public class AgendarViajeStepDefinitions {
     private static final TravelSearch A_DEFAULT_TRIP = new TravelSearch(7, 14, 2, 1);
 
     private double totalBeforePromo;
+    private TravelSearch lastSearch = A_DEFAULT_TRIP;
 
     private Actor paula() {
         return OnStage.theActorInTheSpotlight();
@@ -58,7 +60,8 @@ public class AgendarViajeStepDefinitions {
     @When("busca un viaje con los datos:")
     public void buscaUnViajeConLosDatos(DataTable dataTable) {
         Map<String, String> row = dataTable.asMaps().get(0);
-        paula().attemptsTo(EnterTheTripDetails.from(TravelSearch.from(row)));
+        lastSearch = TravelSearch.from(row);
+        paula().attemptsTo(EnterTheTripDetails.from(lastSearch));
     }
 
     @When("presiona SELECT DESTINATION")
@@ -95,6 +98,15 @@ public class AgendarViajeStepDefinitions {
     @When("elige el destino {string}")
     public void eligeElDestino(String destino) {
         paula().attemptsTo(ChooseTheDestination.named(destino));
+    }
+
+    @Then("el total del pedido corresponde al precio de {string} multiplicado por la cantidad de viajeros")
+    public void elTotalCorrespondeAlPrecioPorViajeros(String destino) {
+        double precioPorViajero = paula().asksFor(VisibleDestinations.priceOf(destino));
+        int viajeros = lastSearch.adults() + lastSearch.children();
+        assertThat(paula().asksFor(OrderSummary.total()))
+                .as("total del pedido (%.2f x %d viajeros)", precioPorViajero, viajeros)
+                .isCloseTo(precioPorViajero * viajeros, within(0.01));
     }
 
     @When("diligencia los datos del viajero:")

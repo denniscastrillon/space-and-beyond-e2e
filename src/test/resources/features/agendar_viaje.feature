@@ -26,6 +26,7 @@ Característica: Agendamiento de un viaje espacial en Space & Beyond
     Y filtra los destinos a un precio máximo de <precioMaximo> dólares
     Entonces todos los destinos visibles cuestan <precioMaximo> dólares o menos
     Cuando elige el destino "<destino>"
+    Entonces el total del pedido corresponde al precio de "<destino>" multiplicado por la cantidad de viajeros
     Y diligencia los datos del viajero:
       | name      | email     | socialSecurityNumber | phoneNumber |
       | <nombre>  | <correo>  | <ssn>                | <telefono>  |

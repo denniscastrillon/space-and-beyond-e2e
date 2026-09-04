@@ -39,6 +39,12 @@ public class DestinationsGallery {
                         "//button[normalize-space()='Book']");
     }
 
+    public static Target priceTagFor(String destination) {
+        return Target.the("price tag for '" + destination + "'")
+                .locatedBy("//div[contains(@class,'gallery-item')][.//h5[normalize-space()='" + destination + "']]" +
+                        "//span[contains(@class,'price-tag')]");
+    }
+
     private DestinationsGallery() {
     }
 }
