@@ -34,6 +34,8 @@ parametrizados desde Gherkin; nada queda escrito directamente en el código.
 ## Ejecución
 
 ```bash
+git clone https://github.com/denniscastrillon/space-and-beyond-e2e.git
+cd space-and-beyond-e2e
 ./gradlew clean test                 # suite completa de regresión (en paralelo)
 ./gradlew clean test -Pheadless      # modo headless
 ./gradlew test -Ptags="@filtro"      # un subconjunto por tag
